@@ -1,0 +1,130 @@
+package view;
+
+
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Vector;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JRadioButton;
+import javax.swing.JSpinner;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+
+import controller.ManagerController;
+import controller.RegistrationController;
+import core.view.View;
+
+public class ManagerAddStaffView extends View{
+	JPanel top, mid, bot;
+	JLabel titleLbl, usernameLbl, passwordLbl, roleChoiceLbl;
+	JTextField usernameTxt, passwordTxt;
+	JComboBox<String> roleChoice;
+	Vector<String> roleChoiceString;
+	JButton cancel, register;
+	
+	public ManagerAddStaffView() {
+		super();
+		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		this.height = 300;
+		this.width = 500;
+	}
+
+	@Override
+	public void initialize() {
+		top = new JPanel(new FlowLayout());
+		
+		GridLayout gl = new GridLayout(3, 2);
+		gl.setVgap(10);
+		mid = new JPanel(gl);
+		bot = new JPanel(new FlowLayout());
+		
+		titleLbl = new JLabel("Registration");
+		usernameLbl = new JLabel("Username: ");
+		passwordLbl = new JLabel("Password: ");
+		roleChoiceLbl = new JLabel("Role: ");
+		
+		usernameTxt = new JTextField();
+		passwordTxt = new JPasswordField();
+		
+		roleChoiceString = new Vector<>();
+		roleChoiceString.add("Manager");
+		roleChoiceString.add("Promo Team");
+		roleChoiceString.add("Admin");
+		
+		roleChoice = new JComboBox<>(roleChoiceString);
+		
+		cancel = new JButton("Cancel");
+		register = new JButton("Register");
+		
+		this.setTitle("Manager Add Staff Page");
+		
+	}
+
+	@Override
+	public void addComponent() {
+		//top
+		top.add(titleLbl);
+		
+		//mid
+		mid.add(usernameLbl);
+		mid.add(usernameTxt);
+		mid.add(passwordLbl);
+		mid.add(passwordTxt);
+		mid.add(roleChoiceLbl);
+		mid.add(roleChoice);
+		
+		mid.setBorder(new EmptyBorder(50, 50, 50, 50));
+		//bot
+		bot.add(cancel);
+		bot.add(register);
+		
+		add(top, BorderLayout.NORTH);
+		add(mid, BorderLayout.CENTER);
+		add(bot, BorderLayout.SOUTH);
+	}
+
+	@Override
+	public void addListener() {
+		register.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Integer roleId = null;
+				if(roleChoice.getSelectedItem().toString()=="Manager") {
+					roleId = 2;
+				}
+				else if(roleChoice.getSelectedItem().toString()=="Promo Team") {
+					roleId = 3;
+				}
+				else if(roleChoice.getSelectedItem().toString()=="Admin") {
+					roleId = 4;
+				}
+				String username = usernameTxt.getText();
+				String password = passwordTxt.getText();
+				RegistrationController.getInstance().insert(roleId, username, password);
+				JOptionPane.showMessageDialog(null, "Successfully added!");
+			}
+		});
+		cancel.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+				ManagerController.getInstance().view().showForm();
+			}
+		});
+	}
+}
